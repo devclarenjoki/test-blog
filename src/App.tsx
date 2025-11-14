@@ -105,7 +105,7 @@ const App: React.FC = () => {
        <header className="bg-brand-slate/80 backdrop-blur-md sticky top-0 z-10">
         <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold cursor-pointer" onClick={() => setView('list')}>
-            Gemini<span className="text-brand-secondary">Blog</span>
+            My<span className="text-brand-secondary">Blog</span>
           </h1>
           <div>
             <button
@@ -127,7 +127,7 @@ const App: React.FC = () => {
         {renderView()}
       </main>
       <footer className="text-center py-6 mt-12 border-t border-gray-800">
-        <p>&copy; {new Date().getFullYear()} Gemini GSAP Blog. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} My Blog. All rights reserved.</p>
       </footer>
     </div>
   );
