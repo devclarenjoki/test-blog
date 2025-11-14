@@ -5,6 +5,6 @@ export interface BlogPost {
   author: string;
   date: string;
   snippet: string;
-  content: string; // Markdown content
+  content: string; // Can be a remote URL or a local blob URL
   imageUrl: string;
 }

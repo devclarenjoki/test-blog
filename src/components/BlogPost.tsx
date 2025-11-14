@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { BlogPost as BlogPostType } from './types';
-import ContentSkeleton from './ContentSkeleton';
+import { LoaderIcon } from './Icons';
 
 // pdf.js is loaded from the CDN in index.html
 declare var pdfjsLib: any;
@@ -22,16 +22,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
       setParsedContent('');
       
       try {
-        let pdfSource;
-        if (typeof post.content === 'string') {
-          // Handle remote URL: use a CORS proxy
-          pdfSource = `https://api.codetabs.com/v1/proxy?quest=${post.content}`;
-        } else {
-          // Handle local file: use the raw Uint8Array data
-          pdfSource = post.content;
-        }
-
-        const loadingTask = pdfjsLib.getDocument(pdfSource);
+        const loadingTask = pdfjsLib.getDocument(post.content);
         const pdf = await loadingTask.promise;
         
         let fullText = '';
@@ -45,7 +36,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
         setParsedContent(fullText.trim());
       } catch (err) {
         console.error('Failed to parse PDF:', err);
-        setError('Could not load or parse the PDF document. The file might be corrupted or inaccessible. For remote files, this could be a security (CORS) issue with the proxy.');
+        setError('Could not load or parse the PDF document. The file might be corrupted or inaccessible due to security (CORS) policies.');
       } finally {
         setIsLoading(false);
       }
@@ -57,15 +48,16 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
         setError("PDF parsing library is not available.");
         setIsLoading(false);
     }
-
-    // Cleanup is no longer necessary as we are not creating/using blob URLs.
-    return () => {};
   }, [post.content]);
 
   const renderContent = () => {
     if (isLoading) {
-      // Show a skeleton loader for a better UX instead of an explicit "parsing" message.
-      return <ContentSkeleton />;
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[300px]">
+          <LoaderIcon className="w-12 h-12 animate-spin text-brand-secondary" />
+          <p className="mt-4 text-lg text-gray-400">Parsing document...</p>
+        </div>
+      );
     }
 
     if (error) {
@@ -100,7 +92,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ post, onBack }) => {
         <p className="text-gray-400 mb-8">
           By {post.author} on {post.date}
         </p>
-        <div className="p-6 sm:p-8 mt-8 bg-brand-slate/50 border border-gray-700 rounded-lg min-h-[200px]">
+        <div className="p-6 sm:p-8 mt-8 bg-brand-slate/50 border border-gray-700 rounded-lg">
           {renderContent()}
         </div>
       </article>

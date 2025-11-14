@@ -34,16 +34,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onAddPost }) => {
       return;
     }
 
-    let contentSource: string | Uint8Array;
+    let contentSource: string;
     if (selectedFile) {
-      try {
-        const arrayBuffer = await selectedFile.arrayBuffer();
-        contentSource = new Uint8Array(arrayBuffer);
-      } catch (error) {
-        console.error("Error reading file:", error);
-        alert("There was an error reading the selected file.");
-        return;
-      }
+      // Create a blob URL for the local file. This URL is temporary and will be
+      // revoked by the BlogPost component when it unmounts.
+      contentSource = URL.createObjectURL(selectedFile);
     } else {
       try {
         new URL(pdfUrl);
@@ -54,7 +49,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onAddPost }) => {
       }
     }
 
-    const newPost: any = {
+    const newPost = {
       title: title,
       content: contentSource,
       author: 'Admin',
